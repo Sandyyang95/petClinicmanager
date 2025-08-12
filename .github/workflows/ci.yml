@@ -1,28 +1,72 @@
-name: CI
+name: Backend CI
 
 on:
-    push:
-        branches:
-            - main
-    pull_request:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  test:
+    name: Run Tests
+    runs-on: self-hosted
 
-        steps:
-        - name: Checkout code
-            uses: actions/checkout@v2
+    strategy:
+      matrix:
+        node-version: [22]
 
-        - name: Set up Node.js
-            uses: actions/setup-node@v2
-            with:
-                node-version: '14'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-        - name: Install dependencies
-            run: npm install
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-        - name: Run tests
-            run: npm test
+      - name: Install Yarn and PM2
+        run: |
+          npm install --global yarn pm2
+          yarn --version
+
+      - name: Print Env Secret
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          echo "Secret 1 is: $MONGO_URI"
+          echo "Secret 2 is: $JWT_SECRET"
+          echo "Secret 3 is: $PORT"
+
+      - name: Stop PM2
+        run: pm2 stop all || true
+
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: yarn install
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: |
+          sudo rm -rf ./build
+          yarn install
+          yarn run build
+
+      - name: Write .env file
+        working-directory: ./backend
+        run: |
+          echo "${{ secrets.PROD }}" > .env
+
+      - name: Run Backend Tests
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: ${{ secrets.PORT }}
+        working-directory: ./backend
+        run: npm test
+
+      - name: Start PM2
+        run: pm2 start all
+
+      - name: Restart PM2
+        run: pm2 restart all
