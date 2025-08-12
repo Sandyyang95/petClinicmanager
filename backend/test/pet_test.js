@@ -8,10 +8,11 @@ const { expect } = chai;
 describe('Pet Controller - AddPet', () => {
   it('should add a new pet successfully', async () => {
     const req = {
-      body: { name: "Buddy", type: "Dog", age: 3, owner: "John Doe" }
+      body: { name: "Buddy", type: "Dog", age: 3, owner: "John Doe" },
+      user: { id: 'test-user-id' } 
     };
     const newPet = { _id: new mongoose.Types.ObjectId(), ...req.body };
-    const createStub = sinon.stub(Pet, 'create').resolves(addPet);
+    const createStub = sinon.stub(Pet, 'create').resolves(newPet);
 
     const res = {
       status: sinon.stub().returnsThis(),
@@ -20,16 +21,20 @@ describe('Pet Controller - AddPet', () => {
 
     await addPet(req, res);
 
-    expect(createStub.calledOnceWith(req.body)).to.be.true;
+    expect(createStub.calledWithMatch({
+      userId: req.user.id,
+      name: req.body.name
+    })).to.be.true;
+
     expect(res.status.calledWith(201)).to.be.true;
-    expect(res.json.calledWith(addPet)).to.be.true;
+    expect(res.json.calledWith(newPet)).to.be.true;
 
     createStub.restore();
   });
 
   it('should return 500 if an error occurs', async () => {
-    const createStub = sinon.stub(Pet, 'add').throws(new Error('DB Error'));
-    const req = { body: { name: "Buddy" } };
+    const createStub = sinon.stub(Pet, 'create').throws(new Error('DB Error'));
+    const req = { body: { name: "Buddy" },user: { id: 'test-user-id' }  };
     const res = { status: sinon.stub().returnsThis(), json: sinon.spy() };
 
     await addPet(req, res);
