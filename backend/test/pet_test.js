@@ -10,8 +10,8 @@ describe('Pet Controller - AddPet', () => {
     const req = {
       body: { name: "Buddy", type: "Dog", age: 3, owner: "John Doe" }
     };
-    const addPet = { _id: new mongoose.Types.ObjectId(), ...req.body };
-    const createStub = sinon.stub(Pet, 'add').resolves(addPet);
+    const newPet = { _id: new mongoose.Types.ObjectId(), ...req.body };
+    const createStub = sinon.stub(Pet, 'create').resolves(addPet);
 
     const res = {
       status: sinon.stub().returnsThis(),
@@ -81,7 +81,8 @@ describe('Pet Controller - UpdatePet', () => {
 describe('Pet Controller - GetPets', () => {
   it('should return all pets', async () => {
     const pets = [{ name: "Buddy" }, { name: "Max" }];
-    const findStub = sinon.stub(Pet, 'find').withArgs({ userId: 'test-user-id' }).resolves(pets);
+    const findStub = sinon.stub(Pet, 'find');
+    findStub.withArgs({ userId: 'test-user-id' }).resolves(pets);
 
     const req = {user: { id: 'test-user-id' } };
     const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
