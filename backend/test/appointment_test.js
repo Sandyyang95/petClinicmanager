@@ -8,10 +8,10 @@ const appointmentController = require('../controllers/appointmentController');
 const { expect } = chai;
 
 afterEach(() => {
-  sinon.restore(); // 每個測試完都還原所有 stub
+  sinon.restore(); 
 });
 
-// 測試 addAppointment
+// test addAppointment
 describe('Appointment Controller - AddAppointment', () => {
   it('should create a new appointment successfully', async () => {
     const req = {
@@ -59,7 +59,7 @@ describe('Appointment Controller - AddAppointment', () => {
   });
 });
 
-// 測試 updateAppointment
+// test updateAppointment
 describe('Appointment Controller - UpdateAppointment', () => {
   it('should update appointment successfully and create TreatmentRecord if completed', async () => {
     const appointmentId = new mongoose.Types.ObjectId();
@@ -102,7 +102,7 @@ describe('Appointment Controller - UpdateAppointment', () => {
   });
 });
 
-// 測試 getAppointments
+// test getAppointments
 describe('Appointment Controller - GetAppointments', () => {
   it('should return all appointments', async () => {
     const userId = new mongoose.Types.ObjectId();
@@ -120,7 +120,7 @@ describe('Appointment Controller - GetAppointments', () => {
   });
 });
 
-// 測試 deleteAppointment
+// test deleteAppointment
 describe('Appointment Controller - DeleteAppointment', () => {
   it('should delete an appointment successfully', async () => {
     const appointmentId = new mongoose.Types.ObjectId();
