@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from '../context/AuthContext';
 
-const API_URL = "http://16.176.16.94:5001";
+const API_URL = "http://16.176.170.230:5001";
 const PETS_PATH = "/api/pets";
 
 function getToken() {
