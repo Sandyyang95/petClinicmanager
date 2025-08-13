@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 
-const API_URL = "http://16.176.16.94:5001";
+const API_URL = "http://16.176.170.230:5001";
 const APPOINTMENTS_PATH = "/api/appointments";
 
 function getToken() {
@@ -63,7 +63,7 @@ export default function Appointment() {
     setter(prev => ({ ...prev, [name]: value }));
   }
 
-  // 新增
+  // add
   async function createAppointment(e) {
     e.preventDefault();
     try {
@@ -75,7 +75,7 @@ export default function Appointment() {
     }
   }
 
-  // 更新
+  // renew
   async function saveEdit(id) {
     try {
       await api(`${APPOINTMENTS_PATH}/${id}`, { method: "PUT", body: editForm });
