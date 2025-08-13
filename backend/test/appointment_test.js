@@ -148,3 +148,4 @@ describe('Appointment Controller - DeleteAppointment', () => {
     expect(res.json.calledWith({ message: 'Appointment not found' })).to.be.true;
   });
 });
+

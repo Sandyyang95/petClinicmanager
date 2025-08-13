@@ -7,3 +7,4 @@ const TreatmentRecordSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('TreatmentRecord', TreatmentRecordSchema);
+
