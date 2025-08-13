@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 //mongoose.set('strictQuery', true);
 
 const connectDB = async () => {
-  try {
+  try { 
     await mongoose.connect(process.env.MONGO_URI);  // Remove deprecated options
     console.log("MongoDB connected successfully");
   } catch (error) {

@@ -91,4 +91,6 @@ const deleteAppointment = async (req, res) => {
   }
 };
 
+
 module.exports = { getAppointments, addAppointment, updateAppointment, deleteAppointment };
+
