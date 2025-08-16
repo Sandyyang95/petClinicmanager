@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 
 const API_URL = "http://16.176.170.230:5001";
-const APPOINTMENTS_PATH = "/api/appointments";
+const APPOINTMENTS_PATH = "appointments";
 
 function getToken() {
   return localStorage.getItem("token");

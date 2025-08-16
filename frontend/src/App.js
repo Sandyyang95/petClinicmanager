@@ -20,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+         <Route path="/appointments" element={<Appointment />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/pet-profile" element={<RequireAuth><PetProfile /></RequireAuth>} />
       </Routes>
