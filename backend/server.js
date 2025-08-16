@@ -1,4 +1,4 @@
-
+// server.js
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -6,30 +6,38 @@ const connectDB = require('./config/db');
 
 dotenv.config();
 
-
 const app = express();
 
+
+// CORS 
+
+const allowedOrigins = ['http://localhost:3000', 'http://54.66.39.55:3000'];
+
 app.use(cors({
-  origin: 'http://16.176.170.230', 
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, 
 }));
 
+
+// JSON parser
 app.use(express.json());
+
+// Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/pets', require('./routes/petRoutes'));
-app.use('/api/appointments', require('./routes/appointmentRoutes'));
 
 
-
-//app.use('/api/tasks', require('./routes/taskRoutes'));
-
-// Export the app object for testing
+// Connect DB and start server
 if (require.main === module) {
-    connectDB();
-    // If the file is run directly, start the server
-    const PORT = process.env.PORT || 5001;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  }
+  connectDB();
+  const PORT = process.env.PORT || 5001;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
 
-
-module.exports = app
+module.exports = app;
