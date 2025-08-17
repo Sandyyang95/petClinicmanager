@@ -1,31 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from '../context/AuthContext';
+import axiosInstance from '../axiosConfig';
 
-const API_URL = "http://16.176.170.230:5001";
 const PETS_PATH = "/api/pets";
-
-function getToken() {
-  return localStorage.getItem("token");
-}
-
-async function api(path, { method = "GET", body } = {}) {
-  const headers = { "Content-Type": "application/json" };
-  const token = getToken();
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-
-  const res = await fetch(`${API_URL}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-    credentials: "include",
-  });
-  if (!res.ok) {
-    let msg = await res.text();
-    try { const j = JSON.parse(msg); msg = j.message || msg; } catch {}
-    throw new Error(msg || res.statusText);
-  }
-  return res.json();
-}
 
 export default function PetProfile() {
   const { user } = useAuth();
@@ -34,17 +11,17 @@ export default function PetProfile() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
-  const [form, setForm] = useState({ name: "", species: "dog", breed: "", age: 0, notes: "" });
+  const [form, setForm] = useState({ name: "", species: "dog", breed: "", age: 0, medicalHistory: "" });
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(form);
 
   async function load() {
     setLoading(true); setErr("");
     try {
-      const data = await api(PETS_PATH);
-      setList(data);
+      const response = await axiosInstance.get(PETS_PATH);
+      setList(response.data);
     } catch (e) {
-      setErr(e.message);
+      setErr(e.response?.data?.message || e.message);
     } finally {
       setLoading(false);
     }
@@ -60,31 +37,31 @@ export default function PetProfile() {
   async function createPet(e) {
     e.preventDefault();
     try {
-      await api(PETS_PATH, { method: "POST", body: form });
-      setForm({ name: "", species: "dog", breed: "", age: 0, notes: "" });
+      await axiosInstance.post(PETS_PATH, form);
+      setForm({ name: "", species: "dog", breed: "", age: 0, medicalHistory: "" });
       await load();
     } catch (e) {
-      alert(e.message);
+      alert(e.response?.data?.message || e.message);
     }
   }
 
   async function saveEdit(id) {
     try {
-      await api(`${PETS_PATH}/${id}`, { method: "PUT", body: editForm });
+      await axiosInstance.put(`${PETS_PATH}/${id}`, editForm);
       setEditingId(null);
       await load();
     } catch (e) {
-      alert(e.message);
+      alert(e.response?.data?.message || e.message);
     }
   }
 
   async function remove(id) {
     if (window.confirm("Delete this pet?")) {
       try {
-        await api(`${PETS_PATH}/${id}`, { method: "DELETE" });
+        await axiosInstance.delete(`${PETS_PATH}/${id}`);
         await load();
       } catch (e) {
-        alert(e.message);
+        alert(e.response?.data?.message || e.message);
       }
     }
   }
@@ -110,8 +87,8 @@ export default function PetProfile() {
           value={form.breed} onChange={(e)=>onChange(e, setForm)} />
         <input className="border p-2 rounded" type="number" name="age" placeholder="Age"
           value={form.age} onChange={(e)=>onChange(e, setForm)} />
-        <textarea className="border p-2 rounded col-span-2" name="notes" placeholder="Notes"
-          value={form.notes} onChange={(e)=>onChange(e, setForm)} />
+        <textarea className="border p-2 rounded col-span-2" name="medicalHistory" placeholder="Medical History"
+          value={form.medicalHistory} onChange={(e)=>onChange(e, setForm)} />
         <button className="col-span-2 bg-blue-600 text-white rounded px-4 py-2">Add Pet</button>
       </form>
 
@@ -135,7 +112,7 @@ export default function PetProfile() {
                       onChange={(e)=>onChange(e, setEditForm)} />
                     <input className="border p-2 rounded" type="number" name="age" value={editForm.age}
                       onChange={(e)=>onChange(e, setEditForm)} />
-                    <textarea className="border p-2 rounded col-span-2" name="notes" value={editForm.notes}
+                    <textarea className="border p-2 rounded col-span-2" name="medicalHistory" value={editForm.medicalHistory}
                       onChange={(e)=>onChange(e, setEditForm)} />
                     <div className="col-span-2 flex gap-2">
                       <button className="bg-green-600 text-white px-3 py-1 rounded" onClick={()=>saveEdit(p._id)}>Save</button>
@@ -146,7 +123,7 @@ export default function PetProfile() {
                   <>
                     <div className="font-semibold">{p.name} <span className="opacity-70 text-sm">({p.species})</span></div>
                     <div className="text-sm opacity-75">Breed: {p.breed || '-'} | Age: {p.age ?? '-'}</div>
-                    {p.notes && <div className="text-sm mt-1">Notes: {p.notes}</div>}
+                    {p.medicalHistory && <div className="text-sm mt-1">Medical History: {p.medicalHistory}</div>}
                   </>
                 )}
               </div>
@@ -155,7 +132,7 @@ export default function PetProfile() {
                   <button className="px-3 py-1 rounded bg-gray-200"
                     onClick={() => { setEditingId(p._id); setEditForm({
                       name: p.name || "", species: p.species || "dog", breed: p.breed || "",
-                      age: p.age ?? 0, notes: p.notes || ""
+                      age: p.age ?? 0, medicalHistory: p.medicalHistory || ""
                     }); }}>
                     Edit
                   </button>

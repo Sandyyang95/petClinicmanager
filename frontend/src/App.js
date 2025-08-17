@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Tasks from './pages/Tasks';
 import PetProfile from "./pages/PetProfile";
+import Appointment from "./pages/Appointment";
 import { useAuth } from './context/AuthContext';
 
 function RequireAuth({ children }) {

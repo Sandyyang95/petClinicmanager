@@ -1,6 +1,5 @@
 const Pet = require('../models/Pet');
 
-// Get Pets (Read)
 const getPets = async (req, res) => {
   try {
     const pets = await Pet.find({ userId: req.user.id });
@@ -10,7 +9,6 @@ const getPets = async (req, res) => {
   }
 };
 
-// Add Pet (Create)
 const addPet = async (req, res) => {
   const { name, species, breed, age, medicalHistory } = req.body;
   try {
@@ -28,7 +26,6 @@ const addPet = async (req, res) => {
   }
 };
 
-// Update Pet (Update)
 const updatePet = async (req, res) => {
   const { name, species, breed, age, medicalHistory } = req.body;
   try {
@@ -48,7 +45,6 @@ const updatePet = async (req, res) => {
   }
 };
 
-// Delete Pet (Delete)
 const deletePet = async (req, res) => {
   try {
     const pet = await Pet.findById(req.params.id);

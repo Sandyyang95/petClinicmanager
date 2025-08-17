@@ -2,7 +2,6 @@ const Appointment = require('../models/Appointment');
 const TreatmentRecord = require('../models/TreatmentRecord');
 const VaccinationRecord = require('../models/VaccinationRecord');
 
-// Get all appointments
 const getAppointments = async (req, res) => {
   try {
     const appointments = await Appointment.find({ userId: req.user.id }).populate('petId');
@@ -12,7 +11,6 @@ const getAppointments = async (req, res) => {
   }
 };
 
-// Add appointment
 const addAppointment = async (req, res) => {
   const { petId, date, reason, appointmentType, status } = req.body;
 
@@ -35,7 +33,6 @@ const addAppointment = async (req, res) => {
   }
 };
 
-// Update appointment
 const updateAppointment = async (req, res) => {
   const { petId, date, reason, appointmentType, status } = req.body;
 
@@ -55,7 +52,6 @@ const updateAppointment = async (req, res) => {
 
     const updatedAppointment = await appointment.save();
 
-    // automatically record when status = Completed
     if (status === 'Completed') {
       if (appointment.appointmentType === 'Treatment') {
         await TreatmentRecord.create({
@@ -67,6 +63,7 @@ const updateAppointment = async (req, res) => {
         await VaccinationRecord.create({
           appointmentId: appointment._id,
           petId: appointment.petId,
+          type: appointment.appointmentType,
           vaccineName: reason || 'No vaccine name provided'
         });
       }
@@ -78,7 +75,6 @@ const updateAppointment = async (req, res) => {
   }
 };
 
-// Delete appointment
 const deleteAppointment = async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id);
@@ -90,7 +86,6 @@ const deleteAppointment = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 module.exports = { getAppointments, addAppointment, updateAppointment, deleteAppointment };
 

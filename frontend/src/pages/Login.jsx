@@ -11,11 +11,16 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post('/auth/login', formData);
+      const response = await axiosInstance.post('/api/auth/login', formData);
       login(response.data);
-      navigate('/tasks');
+      navigate('/pet-profile');
     } catch (error) {
-      alert('Login failed. Please try again.');
+      console.error('Login error:', error);
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(`Login failed: ${error.response.data.message}`);
+      } else {
+        alert('Login failed. Please check your credentials and try again.');
+      }
     }
   };
 

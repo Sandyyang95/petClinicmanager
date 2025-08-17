@@ -11,7 +11,6 @@ afterEach(() => {
   sinon.restore(); 
 });
 
-// test addAppointment
 describe('Appointment Controller - AddAppointment', () => {
   it('should create a new appointment successfully', async () => {
     const req = {
@@ -59,7 +58,6 @@ describe('Appointment Controller - AddAppointment', () => {
   });
 });
 
-// test updateAppointment
 describe('Appointment Controller - UpdateAppointment', () => {
   it('should update appointment successfully and create TreatmentRecord if completed', async () => {
     const appointmentId = new mongoose.Types.ObjectId();
@@ -102,7 +100,6 @@ describe('Appointment Controller - UpdateAppointment', () => {
   });
 });
 
-// test getAppointments
 describe('Appointment Controller - GetAppointments', () => {
   it('should return all appointments', async () => {
     const userId = new mongoose.Types.ObjectId();
@@ -120,7 +117,6 @@ describe('Appointment Controller - GetAppointments', () => {
   });
 });
 
-// test deleteAppointment
 describe('Appointment Controller - DeleteAppointment', () => {
   it('should delete an appointment successfully', async () => {
     const appointmentId = new mongoose.Types.ObjectId();
